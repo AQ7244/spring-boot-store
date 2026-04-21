@@ -14,7 +14,7 @@ The project is structured into several key modules:
 
 ## Technologies Used
 
-*   **Java 23**: Core programming language using the latest features.
+*   **Java 17**: Core programming language using the latest features.
 *   **Spring Boot 3**: Framework for building the RESTful services.
 *   **Spring Security & JWT**: Implementation for robust authentication and stateless authorization.
 *   **Spring Data JPA**: For streamlined database interaction and ORM.
