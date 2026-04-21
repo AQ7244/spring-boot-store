@@ -2,6 +2,7 @@ package com.training.store.auth.configurations;
 
 import com.training.store.common.enums.Role;
 import com.training.store.auth.filters.JwtAuthenticationFilter;
+import com.training.store.common.security.SecurityRules;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +23,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final List<SecurityRules> featureSecurityRules;
 
     @Bean
     public SecurityFilterChain securityWebFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -37,14 +40,10 @@ public class SecurityConfig {
                 c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        registry -> registry
-                                .requestMatchers("/carts/**").permitAll()
-                                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.POST,"/users").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/checkout/webhook").permitAll()
-                                .anyRequest().authenticated()
+                        registry -> {
+                            featureSecurityRules.forEach(securityRules -> securityRules.configure(registry));
+                            registry.anyRequest().authenticated();
+                        }
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
