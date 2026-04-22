@@ -20,12 +20,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/carts")
-@Tag(name = "Carts")
+@Tag(name = "Carts", description = "Operations related to shopping cart")
 public class CartController {
 
     private final CartService cartService;
 
     @PostMapping
+    @Operation(
+            summary = "Create a cart",
+            description = "Create a new cart for the current user."
+    )
     public ResponseEntity<CartDto> createCart(
             UriComponentsBuilder uriComponentsBuilder
     ) {
@@ -37,7 +41,10 @@ public class CartController {
     }
 
     @PostMapping("/{id}/items")
-    @Operation(summary = "Adds a product to the cart.")
+    @Operation(
+            summary = "Add product to cart",
+            description = "Add a product to the shopping cart using product ID and optionally the quantity."
+    )
     public ResponseEntity<CartItemDto> addToCart(
             @Parameter(description = "The ID of the cart.")
             @PathVariable(name = "id") UUID cartId,
@@ -48,12 +55,20 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}")
+    @Operation(
+            summary = "Get cart",
+            description = "Retrieve the shopping cart details for the user."
+    )
     public CartDto getCart(@PathVariable UUID cartId) {
 
         return cartService.getCart(cartId);
     }
 
     @PutMapping("/{cartId}/items/{productId}")
+    @Operation(
+            summary = "Update cart item",
+            description = "Update an existing product's quantity in the shopping cart."
+    )
     public CartItemDto updateItem(
             @PathVariable UUID cartId,
             @PathVariable Long productId,
@@ -64,6 +79,10 @@ public class CartController {
     }
 
     @DeleteMapping("/{cartId}/items/{productId}")
+    @Operation(
+            summary = "Remove item from cart",
+            description = "Remove a product from the shopping cart using its product ID."
+    )
     public ResponseEntity<?> removeItem(
             @PathVariable UUID cartId,
             @PathVariable Long productId
@@ -74,6 +93,10 @@ public class CartController {
     }
 
     @DeleteMapping("/{cartId}/items")
+    @Operation(
+            summary = "Clear cart",
+            description = "Remove all items from the shopping cart."
+    )
     public ResponseEntity<?> clearCart(@PathVariable UUID cartId) {
 
         cartService.clearCart(cartId);

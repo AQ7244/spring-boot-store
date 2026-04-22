@@ -6,6 +6,8 @@ import com.training.store.products.entities.Product;
 import com.training.store.products.mappers.ProductMapper;
 import com.training.store.products.repositories.CategoryRepository;
 import com.training.store.products.repositories.ProductRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/products")
+@Tag(name = "Products", description = "Operations related to products")
 public class ProductController {
 
     private final ProductRepository productRepository;
@@ -23,6 +26,10 @@ public class ProductController {
     private final CategoryRepository categoryRepository;
 
     @GetMapping
+    @Operation(
+            summary = "Get all products",
+            description = "Retrieve a list of all active products available to users."
+    )
     public ResponseEntity<List<ProductDto>> getProducts(
             @RequestParam(defaultValue = "", required = false, name = "categoryId")
             String categoryIdValue
@@ -49,6 +56,10 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @Operation(
+            summary = "Get a product by ID",
+            description = "Retrieve information about a product using its identifier."
+    )
     public ResponseEntity<ProductDto> getProduct(@PathVariable Long id) {
         var product = productRepository.findById(id).orElse(null);
         if (product == null) {
@@ -59,6 +70,10 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(
+            summary = "Create a product",
+            description = "Create a new product by providing required product details in the request body."
+    )
     public ResponseEntity<ProductDto> createProduct(
             @RequestBody ProductDto productDto,
             UriComponentsBuilder uriComponentsBuilder
@@ -80,6 +95,10 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(
+            summary = "Update a product",
+            description = "Update an existing product using its ID and provided details."
+    )
     public ResponseEntity<ProductDto> updateProduct(
             @PathVariable(name = "id") Long productId,
             @RequestBody ProductDto productDto
@@ -104,6 +123,10 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Delete a product",
+            description = "Delete a product permanently by specifying its unique ID."
+    )
     public ResponseEntity<Void> deleteProduct(@PathVariable(name = "id") Long productId) {
         var product = productRepository.findById(productId).orElse(null);
         if (product == null) {

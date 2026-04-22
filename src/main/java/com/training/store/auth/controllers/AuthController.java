@@ -11,6 +11,8 @@ import com.training.store.users.mappers.UserMapper;
 import com.training.store.users.repositories.UserRepository;
 import com.training.store.auth.services.AuthService;
 import com.training.store.auth.services.jwt.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,6 +28,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Operations related to user authentication and authorization")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -36,6 +39,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
+    @Operation(
+            summary = "User login",
+            description = "Authenticates a user using their credentials and returns an access token."
+    )
     public JwtResponse loginUser(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
@@ -54,6 +61,10 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @Operation(
+            summary = "Refresh token",
+            description = "Generates a new access token using a valid refresh token."
+    )
     public JwtResponse refresh(
             @CookieValue(value = "refreshToken") String refreshToken
     ) {
@@ -63,6 +74,10 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    @Operation(
+            summary = "Get current user",
+            description = "Returns the details of the currently authenticated user."
+    )
     public ResponseEntity<UserDto> me() {
 
         var user = authService.getCurrentUser();
